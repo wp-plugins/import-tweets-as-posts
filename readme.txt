@@ -1,4 +1,4 @@
-=== IMPORT TWEETS AS POSTS ===
+=== Import Tweets as Posts ===
 Contributors: Kapil Jain
 Plugin Name:  Import Tweets as Posts
 Plugin URI:   http://plugins.svn.wordpress.org/import-tweets-as-posts/
