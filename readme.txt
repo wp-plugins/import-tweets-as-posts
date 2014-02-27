@@ -1,5 +1,5 @@
 === IMPORT TWEETS AS POSTS ===
-Contributors: ...
+Contributors: Kapil Jain
 Plugin Name:  Import Tweets as Posts
 Plugin URI:   http://plugins.svn.wordpress.org/import-tweets-as-posts/
 Author URI:   http://www.chandankumar.in
