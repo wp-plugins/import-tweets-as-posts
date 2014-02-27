@@ -72,8 +72,8 @@ To create your Twitter OAuth API Keys for the first time, just go through the st
 <li>Copy the indicated access token and access token secret from the screen into your application. Be sure and configure your application as needed before attempting the "your access token" step.</li>
 </ol>
 
-=Can I schedule twitter feed check/import interval time? 
+=Can I schedule twitter feed check/import interval time?  =
 Yes, you can specify the schedule time in field called "Tweets Imports Time Interval" under plugin settings.
 
-= Send your queries at. =
-chandanonline4u@gmail.com
+= Send your queries =
+http://chandankumar.in
