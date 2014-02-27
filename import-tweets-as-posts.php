@@ -38,7 +38,6 @@ $ITAP_Settings = new ImportTweetsAsPosts_Settings();
 register_activation_hook(__FILE__,'itap_crontasks_activation');
 function itap_crontasks_activation(){  
 	wp_schedule_event(time(), 'interval_minutes', 'import_tweets_as_posts');
-	add_filter("plugin_action_links_$ITAP_Plugin", 'itap_plugin_settings_link');
 }
 
 /*= The deactivation hook is executed when the plugin is deactivated
@@ -50,6 +49,7 @@ function itap_crontasks_deactivation(){
 
 /*= Add the settings link to the plugins page
 ----------------------------------------------------------------------- */
+add_filter("plugin_action_links_$ITAP_Plugin", 'itap_plugin_settings_link');
 function itap_plugin_settings_link($links){
 	$settings_link = '<a href="options-general.php?page=import_tweets_as_posts">Settings</a>';
 	array_unshift($links, $settings_link);
