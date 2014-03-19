@@ -2,7 +2,7 @@
 /* Plugin Name: Import Tweets as Posts
  * Plugin URI:  http://wordpress.org/extend/plugins/import-tweets-as-posts
  * Description: This plugin will read tweets from user's timeline and import them as posts in WordPress.
- * Version: 1.0
+ * Version: 1.1
  * Author: Chandan Kumar
  * Author URI: http://www.chandankumar.in/
  * License: GPL2
@@ -85,7 +85,8 @@ if($ITAP_Settings){
 		$twitter_posts_category = get_option('itap_assigned_category');
 		$twitter_post_title = (get_option('itap_post_title')) ? get_option('itap_post_title') : 'Tweet';
 		$twitter_post_status = get_option('itap_post_status');
-
+    $import_retweets = get_option('itap_import_retweets');
+    
 		$connection = new TwitterOAuth($consumerkey, $consumersecret, $accesstoken, $accesstokensecret);
 		
 		$args = array(
@@ -97,6 +98,10 @@ if($ITAP_Settings){
 		);
 		$posts = get_posts($args);
 		$user_timeline_url = "https://api.twitter.com/1.1/statuses/user_timeline.json?screen_name=".$twitteruser."&count=".$notweets;
+    if($import_retweets=='no'){
+      $user_timeline_url .= "&include_rts=false";
+    }
+    
 		if($posts){
 			foreach($posts as $post){
 			  $post_tweet_id = get_post_meta($post->ID, '_tweet_id', true);
@@ -107,13 +112,7 @@ if($ITAP_Settings){
 		$tweets = $connection->get($user_timeline_url);
 
 		if($tweets){
-			$import_retweets = get_option('itap_import_retweets');
-			
 			foreach($tweets as $tweet){
-				if($import_retweets=='false'){
-				  if($tweet->retweeted) continue;
-				}
-			  
 				$tweet_id = abs((int)$tweet->id);
 				$post = get_posts(array(
 					'category' => $twitter_posts_category, 
@@ -127,13 +126,16 @@ if($ITAP_Settings){
 				$pattern = '/http:(\S)+/';
 				$replace = '<a href="${0}" target="_blank">${0}</a>';
 				$text = preg_replace($pattern, $replace, $tweet->text);
+				$tweet_time = strtotime($tweet->created_at) + $tweet->user->utc_offset;
+        $publish_date_time = date_i18n( 'Y-m-d H:i:s', $tweet_time );
+      
 				$data = array(
 					'post_content'   => $text,
 					'post_title'     =>  $twitter_post_title .' ('. $tweet_id .')',
 					'post_status'    => $twitter_post_status,
 					'post_type'      => 'post',
 					'post_author'    => 1,
-					'post_date'      => date('Y-m-d H:i:s', strtotime($tweet->created_at)),
+					'post_date'      => $publish_date_time,
 					'post_category'  => array( $twitter_posts_category ),
 					'comment_status' => 'closed'
 				); 

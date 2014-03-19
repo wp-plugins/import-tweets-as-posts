@@ -8,7 +8,7 @@ Donate link:  http://chandankumar.in
 Tags: Import tweets as posts, tweets to posts, twitter feeds, posts, import tweets, import tweets to blog
 Requires at least: 2.8.6
 Tested up to: 3.8.1
-Stable tag: 1.0
+Stable tag: 1.1
 License: GPLv2
 
 == Description ==
@@ -30,10 +30,10 @@ Copyright (c) 2014 Chandan Kumar
 
 3. Go to Plugin Settings under admin menu settings -> Import Tweets as Posts
 
-4. Enter Twitter OAuth Keys (consumer key, consumer secret, access token, access token secret) in plugin settings fields (See FAQs)
+4. Enter Twitter OAuth Keys (consumer key, consumer secret, access token, access token secret) in plugin settings fields (See FAQs or <a href="http://www.chandankumar.in/how-to-create-twitter-application-and-generate-oauth-authentication-keys/" target="_blank" title="How to Create Twitter Application and Generate OAuth Authentication Keys">post</a>)
 
 6. Also make the following fields settings as per your requirements:
-   <ul>
+<ul>
 <li>Twitter ID</li>
 <li>Tweets Title</li>
 <li>No. of Tweets to Import</li>
@@ -48,14 +48,18 @@ Note: All fields are required to work this plugin more efficiently.
 
 == Upgrade Notice ==
 
-= No Upgrade =
+= There is a new version of Import Tweets as Posts available. View version 1.1 update now. =
 
 
 == Screenshots ==
 ...
 
 == Changelog ==
-No change till now.
+
+= 1.1 =
+<ul>
+<li>Bug has been fixed for re-tweets import option</li>
+</ul>
 
 
 == Frequently Asked Questions ==

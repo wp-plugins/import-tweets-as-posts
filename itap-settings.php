@@ -169,7 +169,7 @@ if(!class_exists('ImportTweetsAsPosts_Settings')){
 		
 		/*= This function provides retweets dropdown inputs for settings fields */
 		public function settings_field_retweets($args){
-			$types = array('true','false');
+			$types = array('yes','no');
 			if($types){
 				$field = $args['field'];
 				$value = get_option($field);
