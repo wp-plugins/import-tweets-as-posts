@@ -7,7 +7,7 @@ Author:       Chandan Kumar
 Donate link:  http://chandankumar.in
 Tags: Import tweets as posts, tweets to posts, twitter feeds, posts, import tweets, import tweets to blog
 Requires at least: 2.8.6
-Tested up to: 3.8.1
+Tested up to: 3.9
 Stable tag: 1.1
 License: GPLv2
 
