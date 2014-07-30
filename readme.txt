@@ -8,7 +8,7 @@ Donate link:  http://chandankumar.in
 Tags: Import tweets as posts, tweets to posts, twitter feeds, posts, import tweets, import tweets to blog
 Requires at least: 2.8.6
 Tested up to: 3.9
-Stable tag: 1.1
+Stable tag: 1.2
 License: GPLv2
 
 == Description ==
@@ -28,16 +28,16 @@ Copyright (c) 2014 Chandan Kumar
 
 2. Activate the plugin at your blog's Admin -> Plugins screen
 
-3. Go to Plugin Settings under admin menu settings -> Import Tweets as Posts
+3. Go to Plugin Settings from "settings -> Import Tweets as Posts"
 
 4. Enter Twitter OAuth Keys (consumer key, consumer secret, access token, access token secret) in plugin settings fields (See FAQs or <a href="http://www.chandankumar.in/how-to-create-twitter-application-and-generate-oauth-authentication-keys/" target="_blank" title="How to Create Twitter Application and Generate OAuth Authentication Keys">post</a>)
 
 6. Also make the following fields settings as per your requirements:
 <ul>
 <li>Twitter ID</li>
-<li>Tweets Title</li>
+<li>Tweets Post Title (Leave this blank if you want to display tweet text as title)</li>
 <li>No. of Tweets to Import</li>
-<li>Tweets Imports Time Interval</li>
+<li>Tweets Imports Time Interval (e.g. Enter "1" for 1 minute interval)</li>
 <li>Assigned Category</li>
 <li>Post Status</li>
 <li>Import Retweets</li>
@@ -48,7 +48,7 @@ Note: All fields are required to work this plugin more efficiently.
 
 == Upgrade Notice ==
 
-= There is a new version of Import Tweets as Posts available. View version 1.1 update now. =
+= There is a new version of Import Tweets as Posts available. View version 1.2 update now. =
 
 
 == Screenshots ==
@@ -56,10 +56,17 @@ Note: All fields are required to work this plugin more efficiently.
 
 == Changelog ==
 
+= 1.2 =
+<ul>
+<li>New version will set imported tweet's image as featured image in post.</li>
+<li>It also allows you to set tweet text as post title.</li>
+</ul>
+
 = 1.1 =
 <ul>
 <li>Bug has been fixed for re-tweets import option</li>
 </ul>
+
 
 
 == Frequently Asked Questions ==
