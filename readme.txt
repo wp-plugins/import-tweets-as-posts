@@ -7,8 +7,8 @@ Author:       Chandan Kumar
 Donate link:  http://chandankumar.in
 Tags: Import tweets as posts, tweets to posts, twitter feeds, posts, import tweets, import tweets to blog
 Requires at least: 2.8.6
-Tested up to: 3.9
-Stable tag: 1.2
+Tested up to: 3.9.2
+Stable tag: 1.3
 License: GPLv2
 
 == Description ==
@@ -48,13 +48,20 @@ Note: All fields are required to work this plugin more efficiently.
 
 == Upgrade Notice ==
 
-= There is a new version of Import Tweets as Posts available. View version 1.2 update now. =
+= There is a new version of Import Tweets as Posts available. View version 1.3 update now. =
 
 
 == Screenshots ==
 ...
 
 == Changelog ==
+
+= 1.3 =
+<ul>
+<li>Hyperlinked the hash tags.</li>
+<li>Additional Fix: Tweet will not be imported again, if it is there in posts with any of these post status:
+'publish', 'pending', 'draft', 'auto-draft', 'future', 'private', 'inherit'</li>
+</ul>
 
 = 1.2 =
 <ul>

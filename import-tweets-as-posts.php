@@ -2,7 +2,7 @@
 /* Plugin Name: Import Tweets as Posts
  * Plugin URI:  http://wordpress.org/extend/plugins/import-tweets-as-posts
  * Description: This plugin will read tweets from user's timeline and import them as posts in WordPress.
- * Version: 1.2
+ * Version: 1.3
  * Author: Chandan Kumar
  * Author URI: http://www.chandankumar.in/
  * License: GPL2
@@ -30,6 +30,7 @@ $ITAP_Plugin = plugin_basename(__FILE__);
 // Include Files
 require_once(sprintf("%s/twitteroauth.php", dirname(__FILE__)));
 require_once(sprintf("%s/itap-settings.php", dirname(__FILE__)));
+require_once(ABSPATH . 'wp-admin/includes/image.php');
 $ITAP_Settings = new ImportTweetsAsPosts_Settings();
 
 
@@ -87,13 +88,14 @@ if($ITAP_Settings){
       $import_retweets = get_option('itap_import_retweets');
 
       $connection = new TwitterOAuth($consumerkey, $consumersecret, $accesstoken, $accesstokensecret);
-
+      $post_status_check =  array('publish','pending','draft','auto-draft', 'future', 'private', 'inherit','schedule');
+      
       $args = array(
         'posts_per_page' => 1, 
         'category' => $twitter_posts_category, 
         'meta_key' => '_tweet_id',
         'order' => 'DESC',
-        'post_status' => $twitter_post_status
+        'post_status' => $post_status_check
       );
       $posts = get_posts($args);
       $user_timeline_url = "https://api.twitter.com/1.1/statuses/user_timeline.json?screen_name=".$twitteruser."&count=".$notweets;
@@ -105,38 +107,53 @@ if($ITAP_Settings){
         foreach($posts as $post){
           $post_tweet_id = get_post_meta($post->ID, '_tweet_id', true);
         }
-        // Get twitter feeds after the recent tweet (by id) in WordPress database
-        $user_timeline_url .= "&since_id".$post_tweet_id;
+        if($post_tweet_id){
+          // Get twitter feeds after the recent tweet (by id) in WordPress database
+          $user_timeline_url .= "&since_id".$post_tweet_id;
+        }
       }
+      
       $tweets = $connection->get($user_timeline_url);
-
       if($tweets){
         foreach($tweets as $tweet){
-
           $tweet_id = abs((int)$tweet->id);
-          $post = get_posts(array(
+          $post_exist = get_posts(array(
             'category' => $twitter_posts_category, 
             'meta_key' => '_tweet_id',
             'meta_value' => $tweet_id,
-            'post_status' => $twitter_post_status
+            'post_status' => $post_status_check
           ));
-          if($post) continue;
+          if($post_exist) continue; // Do Nothing
+            
 
           // Message. Convert links to real links.
           $pattern = '/http:(\S)+/';
           $replace = '<a href="${0}" target="_blank">${0}</a>';
-          $text = preg_replace($pattern, $replace, $tweet->text);
+          $tweet_text = preg_replace($pattern, $replace, $tweet->text);
+          
+          // Link hash tags under tweet text
+          $hashtags = $tweet->entities->hashtags;
+          if($hashtags){
+            foreach($hashtags as $hashtag){
+              $hashFindPattern = "/#". $hashtag->text ."/";
+              $hashUrl = 'https://twitter.com/hashtag/'. $hashtag->text .'?src=hash';
+              $hashReplace = '<a href="'.$hashUrl.'" target="_blank">#'. $hashtag->text .'</a>';
+              $tweet_text = preg_replace($hashFindPattern, $hashReplace, $tweet_text);
+            }
+          }
+
+          // Set tweet time as post publish date
           $tweet_time = strtotime($tweet->created_at) + $tweet->user->utc_offset;
           $publish_date_time = date_i18n( 'Y-m-d H:i:s', $tweet_time );
 
           if(get_option('itap_post_title')){
             $twitter_post_title = get_option('itap_post_title') .' ('. $tweet_id .')';
           } else {
-            $twitter_post_title = strip_tags(html_entity_decode($text));
+            $twitter_post_title = strip_tags(html_entity_decode($tweet_text));
           }
 
           $data = array(
-            'post_content'   => $text,
+            'post_content'   => $tweet_text,
             'post_title'     => $twitter_post_title,
             'post_status'    => $twitter_post_status,
             'post_type'      => 'post',
@@ -177,9 +194,6 @@ if($ITAP_Settings){
 
           // Create the attachment
           $attach_id = wp_insert_attachment( $attachment, $file, $insert_id );
-
-          // Include image.php
-          require_once(ABSPATH . 'wp-admin/includes/image.php');
 
           // Define attachment metadata
           $attach_data = wp_generate_attachment_metadata( $attach_id, $file );
