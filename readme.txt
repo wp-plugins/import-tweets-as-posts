@@ -5,15 +5,15 @@ Plugin URI:   http://plugins.svn.wordpress.org/import-tweets-as-posts/
 Author URI:   http://www.chandankumar.in
 Author:       Chandan Kumar
 Donate link:  http://chandankumar.in
-Tags: Import tweets as posts, tweets to posts, twitter feeds, posts, import tweets, import tweets to blog
+Tags: Import tweets as posts, tweets to posts, twitter feeds, posts, import tweets, import tweets to blog, import tweets by search query
 Requires at least: 2.8.6
 Tested up to: 3.9.2
-Stable tag: 1.3
+Stable tag: 1.4
 License: GPLv2
 
 == Description ==
 
-"Import Tweets as Posts" allows users to easily import their twitter timeline feeds as Posts in WordPress. User can specify the import interval time, Category, Post Title. There is also an option to exclude retweets to import from user's twitter timeline.
+"Import Tweets as Posts" allows to easily import tweets (from user's timeline or by using search query) as Posts in WordPress. User can specify the import interval time, Category, Post Title. There is also an option to exclude retweets and replies from user's twitter timeline.
 
 Released under the terms of the GNU GPL, version 2.
 http://www.fsf.org/licensing/licenses/gpl.html
@@ -34,13 +34,16 @@ Copyright (c) 2014 Chandan Kumar
 
 6. Also make the following fields settings as per your requirements:
 <ul>
-<li>Twitter ID</li>
-<li>Tweets Post Title (Leave this blank if you want to display tweet text as title)</li>
-<li>No. of Tweets to Import</li>
-<li>Tweets Imports Time Interval (e.g. Enter "1" for 1 minute interval)</li>
-<li>Assigned Category</li>
-<li>Post Status</li>
-<li>Import Retweets</li>
+  <li>Import Tweets From ('User Timeline', 'Search Query')</li>
+  <li>Enter 'Twitter Id' or 'Search String' as per above selection.</li>
+  <li>If selected 'Search Query', set 'Twitter Search Result Type' from dropdown.</li>
+  <li>Tweets Post Title (Leave this blank if you want to display tweet text as title)</li>
+  <li>No. of Tweets to Import</li>
+  <li>Tweets Imports Time Interval (e.g. Enter "1" for 1 minute interval)</li>
+  <li>Assigned Category to Twitter Posts</li>
+  <li>Twitter Posts Default Status</li>
+  <li>Import Retweets</li>
+  <li>Exclude Replies</li>
 </ul>
 
 Note: All fields are required to work this plugin more efficiently.
@@ -48,13 +51,19 @@ Note: All fields are required to work this plugin more efficiently.
 
 == Upgrade Notice ==
 
-= There is a new version of Import Tweets as Posts available. View version 1.3 update now. =
+= There is a new version of Import Tweets as Posts available. View version 1.4 update now. =
 
 
 == Screenshots ==
 ...
 
 == Changelog ==
+
+= 1.4 =
+<ul>
+<li>Now user can exclude replies from tweets</li>
+<li>Added search query option to import tweets. Now user hasve two options to import tweets either from search query instead or user timeline.</li>
+</ul>
 
 = 1.3 =
 <ul>

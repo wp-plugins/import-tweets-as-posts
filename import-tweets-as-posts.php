@@ -2,7 +2,7 @@
 /* Plugin Name: Import Tweets as Posts
  * Plugin URI:  http://wordpress.org/extend/plugins/import-tweets-as-posts
  * Description: This plugin will read tweets from user's timeline and import them as posts in WordPress.
- * Version: 1.3
+ * Version: 1.4
  * Author: Chandan Kumar
  * Author URI: http://www.chandankumar.in/
  * License: GPL2
@@ -67,16 +67,33 @@ function import_interval_minutes($interval) {
 	return $interval;
 }
 
+
+/*= Include ITAP Setting Page Style and Script
+-------------------------------------------------- */
+function itap_settings_enqueue() {
+  wp_register_style('itap_setting_style', plugins_url('css/itap_style.css',__FILE__ ));
+  wp_enqueue_style('itap_setting_style');
+  wp_register_script( 'itap_setting_script', plugins_url('js/itap_script.js',__FILE__ ));
+  wp_enqueue_script('itap_setting_script');
+}
+add_action( 'admin_init','itap_settings_enqueue');
+
+
+
 if($ITAP_Settings){
 	/*= Function to import tweets as posts
 	----------------------------------------------------------- */
 	add_action('import_tweets_as_posts','import_tweets_as_posts_function');
 	function import_tweets_as_posts_function(){
 	  $post_tweet_id;
-	  if(get_option('itap_user_id')<>'' AND get_option('itap_consumer_key')<>'' AND 
+	  if( ( get_option('itap_user_id')<>'' OR get_option('itap_search_string')<>'') AND get_option('itap_consumer_key')<>'' AND 
       get_option('itap_consumer_secret')<>'' AND get_option('itap_access_token')<>'' AND get_option('itap_access_token_secret')<>'' ){
 		
+      $tweet_from = get_option('itap_tweet_from');
       $twitteruser = get_option('itap_user_id');
+      $tweet_search_string = get_option('itap_search_string');
+      $search_result_type = get_option('itap_search_result_type');
+      
       $consumerkey = get_option('itap_consumer_key');
       $consumersecret = get_option('itap_consumer_secret');
       $accesstoken = get_option('itap_access_token');
@@ -86,6 +103,7 @@ if($ITAP_Settings){
       $twitter_posts_category = get_option('itap_assigned_category');
       $twitter_post_status = get_option('itap_post_status');
       $import_retweets = get_option('itap_import_retweets');
+      $exclude_replies = get_option('itap_exclude_replies');
 
       $connection = new TwitterOAuth($consumerkey, $consumersecret, $accesstoken, $accesstokensecret);
       $post_status_check =  array('publish','pending','draft','auto-draft', 'future', 'private', 'inherit','schedule');
@@ -98,22 +116,37 @@ if($ITAP_Settings){
         'post_status' => $post_status_check
       );
       $posts = get_posts($args);
-      $user_timeline_url = "https://api.twitter.com/1.1/statuses/user_timeline.json?screen_name=".$twitteruser."&count=".$notweets;
-      if($import_retweets=='no'){
-        $user_timeline_url .= "&include_rts=false";
+     
+      
+      if($tweet_from=='Search Query'){
+        $tweet_api_url = "https://api.twitter.com/1.1/search/tweets.json?q=".  rawurlencode($tweet_search_string) ."&result_type=".$search_result_type."&count=".$notweets;
+        
+      } else { // Import from user timeline
+        $tweet_api_url = "https://api.twitter.com/1.1/statuses/user_timeline.json?screen_name=".$twitteruser."&count=".$notweets;
+        if($import_retweets=='no'){
+          $tweet_api_url .= "&include_rts=false";
+        }
+        if($exclude_replies=='yes'){
+          $tweet_api_url .= "&exclude_replies=true";
+        }
       }
-
+      
+      
       if($posts){
         foreach($posts as $post){
           $post_tweet_id = get_post_meta($post->ID, '_tweet_id', true);
         }
         if($post_tweet_id){
-          // Get twitter feeds after the recent tweet (by id) in WordPress database
-          $user_timeline_url .= "&since_id".$post_tweet_id;
+          $tweet_api_url .= "&since_id=".$post_tweet_id; // Get twitter feeds after the recent tweet (by id) in WordPress database
         }
       }
       
-      $tweets = $connection->get($user_timeline_url);
+      
+      $tweets = $connection->get($tweet_api_url);
+      if($tweet_from=='Search Query'){
+        $tweets = $tweets->statuses;
+      }
+      
       if($tweets){
         foreach($tweets as $tweet){
           $tweet_id = abs((int)$tweet->id);
@@ -131,7 +164,7 @@ if($ITAP_Settings){
           $replace = '<a href="${0}" target="_blank">${0}</a>';
           $tweet_text = preg_replace($pattern, $replace, $tweet->text);
           
-          // Link hash tags under tweet text
+          // Link Search Querys under tweet text
           $hashtags = $tweet->entities->hashtags;
           if($hashtags){
             foreach($hashtags as $hashtag){
