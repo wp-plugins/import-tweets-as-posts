@@ -61,8 +61,8 @@ Note: All fields are required to work this plugin more efficiently.
 
 = 1.4 =
 <ul>
-<li>Now user can exclude replies from tweets</li>
-<li>Added search query option to import tweets. Now user hasve two options to import tweets either from search query instead or user timeline.</li>
+<li>Now user can exclude replies from tweets.</li>
+<li>Added search query option to import tweets. Now user have two options to import tweets either through search query or user timeline.</li>
 </ul>
 
 = 1.3 =
