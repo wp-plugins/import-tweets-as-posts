@@ -26,6 +26,7 @@ if(!class_exists('ImportTweetsAsPosts_Settings')){
 			register_setting('import_tweets_as_posts-group', 'itap_post_status');
 			register_setting('import_tweets_as_posts-group', 'itap_import_retweets');
 			register_setting('import_tweets_as_posts-group', 'itap_exclude_replies');
+			register_setting('import_tweets_as_posts-group', 'itap_wp_time_as_published_date');
 
 			// add your settings section
 			add_settings_section(
@@ -156,6 +157,14 @@ if(!class_exists('ImportTweetsAsPosts_Settings')){
         'import_tweets_as_posts-section',
         array('field' => 'itap_exclude_replies','field_type'=> 'selectbox')
       );
+			add_settings_field(
+        'itap_wp_time_as_published_date',
+        'Publish date as WordPress Timezone',
+        array(&$this, 'itap_settings_field'),
+        'import_tweets_as_posts',
+        'import_tweets_as_posts-section',
+        array('field' => 'itap_wp_time_as_published_date','field_type'=> 'selectbox')
+      );
     } // END public static function activate
         
     public function settings_section_import_tweets_as_posts(){
@@ -174,13 +183,13 @@ if(!class_exists('ImportTweetsAsPosts_Settings')){
         // echo a proper input type="text"
         echo sprintf('<input type="text" name="%s" id="%s" value="%s" width="200" />', $field, $field, $value);
         if($field=='itap_post_title'){
-          echo '<span class="note">To display tweet text as post title, leave this field blank.</span>';
+          _e('<span class="note">To display tweet text as post title, leave this field blank.</span>');
         }
         if($field == 'itap_search_string'){
-          echo '<span class="note">Enter search text. For more reference <a href="https://dev.twitter.com/docs/using-search" target="_blank">https://dev.twitter.com/docs/using-search</a></span>';
+          _e('<span class="note">Enter search text. For more reference <a href="https://dev.twitter.com/docs/using-search" target="_blank">https://dev.twitter.com/docs/using-search</a></span>');
         }
         if($field == 'itap_interval_time'){
-          echo '<span class="note">Enter interval time in minutes (e.g. 5).</span>';
+           _e('<span class="note">Enter interval time in minutes (e.g. 5).</span>');
         }
 
       } else if($field_type=='selectbox'){
@@ -227,9 +236,20 @@ if(!class_exists('ImportTweetsAsPosts_Settings')){
                 _e('<option value="'. $type .'" '.$selected .'>'. $type .'</option>');
               }
             }
+          } else if($field == 'itap_wp_time_as_published_date'){
+            $types = array('no','yes');
+            if($types){
+              foreach($types as $type){
+                $selected = ($type==$value) ? 'selected' : '';
+                _e('<option value="'. $type .'" '.$selected .'>'. $type .'</option>');
+              }
+            }
           }
-          
-        _e( '</select>' );
+        _e( '</select><br />' );
+        
+        if($field == 'itap_wp_time_as_published_date'){
+           _e('<span class="note">By default, Tweet publish date will be set as per twitter timzone setting.');
+        }
       }
     }
     
