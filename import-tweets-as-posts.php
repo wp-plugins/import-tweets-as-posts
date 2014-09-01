@@ -2,7 +2,7 @@
 /* Plugin Name: Import Tweets as Posts
  * Plugin URI:  http://wordpress.org/extend/plugins/import-tweets-as-posts
  * Description: This plugin will read tweets from user's timeline or search query and import them as posts in WordPress.
- * Version: 1.4
+ * Version: 1.5
  * Author: Chandan Kumar
  * Author URI: http://www.chandankumar.in/
  * License: GPL2
@@ -159,10 +159,16 @@ if($ITAP_Settings){
           if($post_exist) continue; // Do Nothing
             
 
-          // Message. Convert links to real links.
-          $pattern = '/http:(\S)+/';
+          // Convert links to real links.
+//          $pattern = '/http:(\S)+/';
+          $pattern = "/(http|https)\:\/\/[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,3}(\/\S*)?/";
           $replace = '<a href="${0}" target="_blank">${0}</a>';
           $tweet_text = preg_replace($pattern, $replace, $tweet->text);
+          
+          // Convert @ to follow
+          $follow_pattern = '/(@([_a-z0-9\-]+))/i';
+          $follow_replace = '<a href="https://twitter.com/${0}" target="_blank">${0}</a>';
+          $tweet_text = preg_replace($follow_pattern, $follow_replace, $tweet_text);
           
           // Link Search Querys under tweet text
           $hashtags = $tweet->entities->hashtags;
@@ -176,9 +182,9 @@ if($ITAP_Settings){
           }
 
           // Set tweet time as post publish date
-          $tweet_time = strtotime($tweet->created_at) + $tweet->user->utc_offset;
-          $publish_date_time = date_i18n( 'Y-m-d H:i:s', $tweet_time );
-
+          $tweet_post_time = strtotime($tweet->created_at) + $tweet->user->utc_offset;
+          $publish_date_time = date_i18n( 'Y-m-d H:i:s', $tweet_post_time );
+          
           if(get_option('itap_post_title')){
             $twitter_post_title = get_option('itap_post_title') .' ('. $tweet_id .')';
           } else {
@@ -199,44 +205,45 @@ if($ITAP_Settings){
 
           // Add Featured Image to Post
           $tweet_media = $tweet->entities->media;
-          $tweet_media_url = $tweet_media[0]->media_url; // Define the image URL here
-          $upload_dir = wp_upload_dir(); // Set upload folder
-          $image_data = file_get_contents($tweet_media_url); // Get image data
-          $filename   = basename($tweet_media_url); // Create image file name
+          if($tweet_media AND $insert_id){
+            $tweet_media_url = $tweet_media[0]->media_url; // Define the image URL here
+            $upload_dir = wp_upload_dir(); // Set upload folder
+            $image_data = file_get_contents($tweet_media_url); // Get image data
+            $filename   = basename($tweet_media_url); // Create image file name
+            
+            // Check folder permission and define file location
+            if( wp_mkdir_p( $upload_dir['path'] ) ) {
+              $file = $upload_dir['path'] . '/' . $filename;
+            } else {
+              $file = $upload_dir['basedir'] . '/' . $filename;
+            }
+            
+            // Create the image  file on the server
+            file_put_contents( $file, $image_data );
 
-          // Check folder permission and define file location
-          if( wp_mkdir_p( $upload_dir['path'] ) ) {
-            $file = $upload_dir['path'] . '/' . $filename;
-          } else {
-            $file = $upload_dir['basedir'] . '/' . $filename;
+            // Check image file type
+            $wp_filetype = wp_check_filetype( $filename, null );
+
+            // Set attachment data
+            $attachment = array(
+              'post_mime_type' => $wp_filetype['type'],
+              'post_title'     => sanitize_file_name( $filename ),
+              'post_content'   => '',
+              'post_status'    => 'inherit'
+            );
+
+            // Create the attachment
+            $attach_id = wp_insert_attachment( $attachment, $file, $insert_id );
+
+            // Define attachment metadata
+            $attach_data = wp_generate_attachment_metadata( $attach_id, $file );
+
+            // Assign metadata to attachment
+            wp_update_attachment_metadata( $attach_id, $attach_data );
+
+            // And finally assign featured image to post
+            set_post_thumbnail( $insert_id, $attach_id );
           }
-
-          // Create the image  file on the server
-          file_put_contents( $file, $image_data );
-
-          // Check image file type
-          $wp_filetype = wp_check_filetype( $filename, null );
-
-          // Set attachment data
-          $attachment = array(
-            'post_mime_type' => $wp_filetype['type'],
-            'post_title'     => sanitize_file_name( $filename ),
-            'post_content'   => '',
-            'post_status'    => 'inherit'
-          );
-
-          // Create the attachment
-          $attach_id = wp_insert_attachment( $attachment, $file, $insert_id );
-
-          // Define attachment metadata
-          $attach_data = wp_generate_attachment_metadata( $attach_id, $file );
-
-          // Assign metadata to attachment
-          wp_update_attachment_metadata( $attach_id, $attach_data );
-
-          // And finally assign featured image to post
-          set_post_thumbnail( $insert_id, $attach_id );
-
 
           if($insert_id){
             update_post_meta($insert_id, '_tweet_id', $tweet_id);

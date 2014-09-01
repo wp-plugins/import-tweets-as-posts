@@ -8,7 +8,7 @@ Donate link:  http://chandankumar.in
 Tags: Import tweets as posts, tweets to posts, twitter feeds, posts, import tweets, import tweets to blog, import tweets by search query
 Requires at least: 2.8.6
 Tested up to: 3.9.2
-Stable tag: 1.4
+Stable tag: 1.5
 License: GPLv2
 
 == Description ==
@@ -51,13 +51,21 @@ Note: All fields are required to work this plugin more efficiently.
 
 == Upgrade Notice ==
 
-= There is a new version of Import Tweets as Posts available. View version 1.4 update now. =
+= There is a new version of Import Tweets as Posts available. View version 1.5 update now. =
 
 
 == Screenshots ==
 ...
 
+
 == Changelog ==
+
+= 1.5 =
+<ul>
+<li>Hyperlinked the mentioned user under Tweets.</li>
+<li>Fixed Issue: Each tweet was creating an empty WordPress media object in the media library.</li>
+<li>Fixed Issue: Twitter's t.co links were not being converted to hyperlinks just because of https.</li>
+</ul>
 
 = 1.4 =
 <ul>
