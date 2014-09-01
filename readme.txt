@@ -62,6 +62,7 @@ Note: All fields are required to work this plugin more efficiently.
 
 = 1.5 =
 <ul>
+<li>Added option to set tweet publish date as per WordPress timezone.</li>
 <li>Hyperlinked the mentioned user under Tweets.</li>
 <li>Fixed Issue: Each tweet was creating an empty WordPress media object in the media library.</li>
 <li>Fixed Issue: Twitter's t.co links were not being converted to hyperlinks just because of https.</li>

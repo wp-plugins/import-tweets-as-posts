@@ -182,8 +182,21 @@ if($ITAP_Settings){
           }
 
           // Set tweet time as post publish date
-          $tweet_post_time = strtotime($tweet->created_at) + $tweet->user->utc_offset;
+//          $tweet_post_time = strtotime($tweet->created_at) + $tweet->user->utc_offset;
+          
+          $tweet_created_at = strtotime($tweet->created_at);
+          $itap_set_timezone = get_option('itap_wp_time_as_published_date');
+          
+          if($itap_set_timezone=='yes'){
+            $wp_offset = get_option('gmt_offset');
+            if($wp_offset){
+              $tweet_post_time = $tweet_created_at + ($wp_offset * 3600);
+            }
+          } else {
+            $tweet_post_time = $tweet_created_at + $tweet->user->utc_offset;
+          }
           $publish_date_time = date_i18n( 'Y-m-d H:i:s', $tweet_post_time );
+          
           
           if(get_option('itap_post_title')){
             $twitter_post_title = get_option('itap_post_title') .' ('. $tweet_id .')';
