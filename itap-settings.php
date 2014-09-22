@@ -2,172 +2,69 @@
 if(!class_exists('ImportTweetsAsPosts_Settings')){
 	class ImportTweetsAsPosts_Settings{
 		/*= Construct the plugin object */
+    var $fields;
+    
 		public function __construct(){
-			// register actions
+      //field_id as key => feild title/label, field type
+      $this->fields = array(
+        'itap_tweet_from' => array('title'=>'Import Tweets From', 'type'=>'selectbox'),
+        'itap_user_id' => array('title'=>'Twitter User ID', 'type'=>'input'),
+        'itap_search_string' => array('title'=>'Twitter Search String', 'type'=>'input'),
+        'itap_search_result_type' => array('title'=>'Twitter Search Result Type', 'type'=>'selectbox'),
+        'itap_consumer_key' => array('title'=>'Twitter Consumer Key', 'type'=>'input'),
+        'itap_consumer_secret' => array('title'=>'Twitter Consumer Secret', 'type'=>'input'),
+        'itap_access_token' => array('title'=>'Twitter Access Token', 'type'=>'input'),
+        'itap_access_token_secret' => array('title'=>'witter Access Token Secret', 'type'=>'input'),
+        'itap_tweets_count' => array('title'=>'No. of Tweets to Import', 'type'=>'input'),
+        'itap_interval_time' => array('title'=>'Tweets Imports Time Interval', 'type'=>'input'),
+        'itap_post_title' => array('title'=>'Text before Tweets Post Title', 'type'=>'input'),
+        'itap_post_type' => array('title'=>'Tweets Post Type', 'type'=>'selectbox'),
+        'itap_assigned_category' => array('title'=>'Assigned Category to Twitter Posts', 'type'=>'selectbox'),
+        'itap_post_status' => array('title'=>'Twitter Posts Default Status', 'type'=>'selectbox'),
+        'itap_import_retweets' => array('title'=>'Import Retweets', 'type'=>'selectbox'),
+        'itap_exclude_replies' => array('title'=>'Exclude Replies', 'type'=>'selectbox'),
+        'itap_wp_time_as_published_date' => array('title'=>'Publish date as WordPress Timezone', 'type'=>'selectbox')
+      );
+      
+      
+      // register actions
 			add_action('admin_init', array(&$this, 'admin_init'));
 			add_action('admin_menu', array(&$this, 'add_menu'));
+      
 		}
 
     /*= hook into WP's admin_init action hook */
     public function admin_init(){
-			// register your plugin's settings
-			register_setting('import_tweets_as_posts-group', 'itap_tweet_from');
-			register_setting('import_tweets_as_posts-group', 'itap_user_id');
-			register_setting('import_tweets_as_posts-group', 'itap_search_string');
-			register_setting('import_tweets_as_posts-group', 'itap_search_result_type');
-			register_setting('import_tweets_as_posts-group', 'itap_consumer_key');
-			register_setting('import_tweets_as_posts-group', 'itap_consumer_secret');
-			register_setting('import_tweets_as_posts-group', 'itap_access_token');
-			register_setting('import_tweets_as_posts-group', 'itap_access_token_secret');
-			register_setting('import_tweets_as_posts-group', 'itap_post_title');
-			register_setting('import_tweets_as_posts-group', 'itap_tweets_count');
-			register_setting('import_tweets_as_posts-group', 'itap_interval_time');
-			register_setting('import_tweets_as_posts-group', 'itap_assigned_category');
-			register_setting('import_tweets_as_posts-group', 'itap_post_status');
-			register_setting('import_tweets_as_posts-group', 'itap_import_retweets');
-			register_setting('import_tweets_as_posts-group', 'itap_exclude_replies');
-			register_setting('import_tweets_as_posts-group', 'itap_wp_time_as_published_date');
-
-			// add your settings section
+      // Plugins Settings Section
 			add_settings_section(
-				'import_tweets_as_posts-section',
-				'',
-				array(&$this, 'settings_section_import_tweets_as_posts'),
+				'import_tweets_as_posts-section', '',
+				array(&$this, 'settings_section_itap'),
 				'import_tweets_as_posts'
 			);
-			
-			// add your setting's fields
-      add_settings_field(
-          'itap_tweet_from', //ID
-          'Import Tweets From', // Title
-          array(&$this, 'itap_settings_field'), // Callback
-          'import_tweets_as_posts', //page
-          'import_tweets_as_posts-section', // section
-          array('field' => 'itap_tweet_from','field_type'=> 'selectbox') //argument
-      );
-      add_settings_field(
-          'itap_user_id',
-          'Twitter User ID',
-          array(&$this, 'itap_settings_field'),
-          'import_tweets_as_posts',
-          'import_tweets_as_posts-section',
-          array('field' => 'itap_user_id','field_type'=> 'input')
-      );
-      add_settings_field(
-          'itap_search_string',
-          'Twitter Search String',
-          array(&$this, 'itap_settings_field'),
-          'import_tweets_as_posts',
-          'import_tweets_as_posts-section',
-          array('field' => 'itap_search_string','field_type'=> 'input')
-      );
-      add_settings_field(
-          'itap_search_result_type',
-          'Twitter Search Result Type',
-          array(&$this, 'itap_settings_field'),
-          'import_tweets_as_posts',
-          'import_tweets_as_posts-section',
-          array('field' => 'itap_search_result_type','field_type'=> 'selectbox')
-      );
-      add_settings_field(
-          'itap_consumer_key',
-          'Twitter Consumer Key',
-          array(&$this, 'itap_settings_field'),
-          'import_tweets_as_posts',
-          'import_tweets_as_posts-section',
-          array('field' => 'itap_consumer_key','field_type'=> 'input') 
-      );
-			add_settings_field(
-        'itap_consumer_secret',
-        'Twitter Consumer Secret',
-        array(&$this, 'itap_settings_field'),
-        'import_tweets_as_posts',
-        'import_tweets_as_posts-section',
-        array('field' => 'itap_consumer_secret','field_type'=> 'input') 
-      );
-			add_settings_field(
-        'itap_access_token',
-        'Twitter Access Token',
-        array(&$this, 'itap_settings_field'),
-        'import_tweets_as_posts',
-        'import_tweets_as_posts-section',
-        array('field' => 'itap_access_token','field_type'=> 'input') 
-      );
-			add_settings_field(
-        'itap_access_token_secret',
-        'Twitter Access Token Secret',
-        array(&$this, 'itap_settings_field'),
-        'import_tweets_as_posts',
-        'import_tweets_as_posts-section',
-        array('field' => 'itap_access_token_secret','field_type'=> 'input') 
-      );
-			add_settings_field(
-        'itap_post_title',
-        'Twitter Post Title',
-        array(&$this, 'itap_settings_field'),
-        'import_tweets_as_posts',
-        'import_tweets_as_posts-section',
-        array('field' => 'itap_post_title','field_type'=> 'input')      
-      );
-			add_settings_field(
-        'itap_tweets_count',
-        'No. of Tweets to Import',
-        array(&$this, 'itap_settings_field'),
-        'import_tweets_as_posts',
-        'import_tweets_as_posts-section',
-        array('field' => 'itap_tweets_count','field_type'=> 'input')
-      );
-			add_settings_field(
-        'itap_interval_time',
-        'Tweets Imports Time Interval',
-        array(&$this, 'itap_settings_field'),
-        'import_tweets_as_posts',
-        'import_tweets_as_posts-section',
-        array('field' => 'itap_interval_time','field_type'=> 'input')
-      );
-			add_settings_field(
-        'itap_assigned_category',
-        'Assigned Category to Twitter Posts',
-        array(&$this, 'itap_settings_field'),
-        'import_tweets_as_posts',
-        'import_tweets_as_posts-section',
-        array('field' => 'itap_assigned_category','field_type'=> 'selectbox')
-      );
-			add_settings_field(
-        'itap_post_status',
-        'Twitter Posts Default Status',
-        array(&$this, 'itap_settings_field'),
-        'import_tweets_as_posts',
-        'import_tweets_as_posts-section',
-        array('field' => 'itap_post_status','field_type'=> 'selectbox')
-      );
-			add_settings_field(
-        'itap_import_retweets',
-        'Import Retweets',
-        array(&$this, 'itap_settings_field'),
-        'import_tweets_as_posts',
-        'import_tweets_as_posts-section',
-        array('field' => 'itap_import_retweets','field_type'=> 'selectbox')
-      );
-			add_settings_field(
-        'itap_exclude_replies',
-        'Exclude Replies',
-        array(&$this, 'itap_settings_field'),
-        'import_tweets_as_posts',
-        'import_tweets_as_posts-section',
-        array('field' => 'itap_exclude_replies','field_type'=> 'selectbox')
-      );
-			add_settings_field(
-        'itap_wp_time_as_published_date',
-        'Publish date as WordPress Timezone',
-        array(&$this, 'itap_settings_field'),
-        'import_tweets_as_posts',
-        'import_tweets_as_posts-section',
-        array('field' => 'itap_wp_time_as_published_date','field_type'=> 'selectbox')
-      );
+      
+      
+			// Register feilds and their settings
+      if($this->fields){
+        foreach($this->fields as $key => $value){
+          //Register Field
+          register_setting('import_tweets_as_posts-group', $key); // field group, feild name
+          
+          //Add Field Settings
+          add_settings_field(
+            $key, $value['title'], // field id, field label
+            array(&$this, 'itap_settings_field'), // Callback
+            'import_tweets_as_posts', //page
+            'import_tweets_as_posts-section', // section
+            array('field' => $key,'field_type'=> $value['type']) //argument
+          );
+        }
+      }
+      
+      
     } // END public static function activate
+    
         
-    public function settings_section_import_tweets_as_posts(){
+    public function settings_section_itap(){
       // Think of this as help text for the section.
       echo 'All fields are required.';
     }
@@ -191,11 +88,19 @@ if(!class_exists('ImportTweetsAsPosts_Settings')){
         if($field == 'itap_interval_time'){
            _e('<span class="note">Enter interval time in minutes (e.g. 5).</span>');
         }
-
+      
       } else if($field_type=='selectbox'){
         _e('<select name="'.$field.'" id="'.$field.'">');
 
-          if($field=='itap_assigned_category'){ // If field type list categories
+          if($field=='itap_post_type'){ // If field type list categories
+            $itap_post_types = array('post','tweet');
+            if($itap_post_types){
+              foreach($itap_post_types as $itap_post_type){
+                $selected = ($itap_post_type==$value) ? 'selected' : '';
+                _e('<option value="'. $itap_post_type .'" '.$selected .'>'. $itap_post_type .'</option>');
+              }
+            }
+          } else if($field=='itap_assigned_category'){ // If field type list categories
             $categories = get_categories(array('hide_empty' => 0));
             if($categories){
               foreach($categories as $category){
@@ -286,7 +191,7 @@ if(!class_exists('ImportTweetsAsPosts_Settings')){
             <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank">
             <input type="hidden" name="cmd" value="_s-xclick">
             <input type="hidden" name="hosted_button_id" value="PU5W6BKWH8BQE">
-            <input type="image" src="'. plugins_url('/images/paypal.png', __FILE__ ).'" border="0" name="submit" alt="PayPal Ð The safer, easier way to pay online.">
+            <input type="image" src="'. plugins_url('/images/btn_donate.gif', __FILE__ ).'" border="0" name="submit" alt="PayPal Ð The safer, easier way to pay online.">
             <img alt="" border="0" src="https://www.paypalobjects.com/en_GB/i/scr/pixel.gif" width="1" height="1">
             </form>
           </div>';

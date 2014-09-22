@@ -2,7 +2,7 @@
 /* Plugin Name: Import Tweets as Posts
  * Plugin URI:  http://wordpress.org/extend/plugins/import-tweets-as-posts
  * Description: This plugin will read tweets from user's timeline or search query and import them as posts in WordPress.
- * Version: 1.5
+ * Version: 2.0
  * Author: Chandan Kumar
  * Author URI: http://www.chandankumar.in/
  * License: GPL2
@@ -79,6 +79,53 @@ function itap_settings_enqueue() {
 add_action( 'admin_init','itap_settings_enqueue');
 
 
+// Register Custom Post Type
+function tweets_post_type() {
+  $post_type = get_option('itap_post_type');
+  
+  if($post_type=='tweet'){
+    $labels = array(
+      'name'                => _x( 'Tweets', 'Post Type General Name', 'text_domain' ),
+      'singular_name'       => _x( 'Tweet', 'Post Type Singular Name', 'text_domain' ),
+      'menu_name'           => __( 'Tweets', 'text_domain' ),
+      'parent_item_colon'   => __( 'Parent Tweet:', 'text_domain' ),
+      'all_items'           => __( 'All Tweets', 'text_domain' ),
+      'view_item'           => __( 'View Tweet', 'text_domain' ),
+      'add_new_item'        => __( 'Add New Tweet', 'text_domain' ),
+      'add_new'             => __( 'New Tweet', 'text_domain' ),
+      'edit_item'           => __( 'Edit Tweet', 'text_domain' ),
+      'update_item'         => __( 'Update Tweet', 'text_domain' ),
+      'search_items'        => __( 'Search Tweet', 'text_domain' ),
+      'not_found'           => __( 'No tweet found', 'text_domain' ),
+      'not_found_in_trash'  => __( 'No tweets found in Trash', 'text_domain' ),
+    );
+    $args = array(
+      'label'               => __( 'tweet', 'text_domain' ),
+      'description'         => __( 'Tweet information pages', 'text_domain' ),
+      'labels'              => $labels,
+      'supports'            => array( 'title', 'editor', 'excerpt', 'author', 'thumbnail', 'comments', 'custom-fields', ),
+      'taxonomies'          => array( 'tweets' ),
+      'hierarchical'        => false,
+      'public'              => true,
+      'show_ui'             => true,
+      'show_in_menu'        => true,
+      'show_in_nav_menus'   => true,
+      'show_in_admin_bar'   => true,
+      'menu_position'       => 5,
+      'can_export'          => true,
+      'has_archive'         => true,
+      'exclude_from_search' => false,
+      'publicly_queryable'  => true,
+      'capability_type'     => 'post',
+    );
+    register_post_type( 'tweet', $args );
+//    flush_rewrite_rules();
+  }
+  
+}
+// Hook into the 'init' action
+add_action( 'init', 'tweets_post_type', 0 );
+
 
 if($ITAP_Settings){
 	/*= Function to import tweets as posts
@@ -107,18 +154,9 @@ if($ITAP_Settings){
 
       $connection = new TwitterOAuth($consumerkey, $consumersecret, $accesstoken, $accesstokensecret);
       $post_status_check =  array('publish','pending','draft','auto-draft', 'future', 'private', 'inherit','schedule');
+      $post_type = get_option('itap_post_type');
       
-      $args = array(
-        'posts_per_page' => 1, 
-        'category' => $twitter_posts_category, 
-        'meta_key' => '_tweet_id',
-        'order' => 'DESC',
-        'post_status' => $post_status_check
-      );
-      $posts = get_posts($args);
-     
-      
-      if($tweet_from=='Search Query'){
+      if($tweet_from=='Search Query'){ // Import from search query
         $tweet_api_url = "https://api.twitter.com/1.1/search/tweets.json?q=".  rawurlencode($tweet_search_string) ."&result_type=".$search_result_type."&count=".$notweets;
         
       } else { // Import from user timeline
@@ -132,6 +170,17 @@ if($ITAP_Settings){
       }
       
       
+      $args = array(
+        'posts_per_page' => 1, 
+        'post_type' => $post_type,
+        'meta_key' => '_tweet_id',
+        'post_status' => $post_status_check,
+        'order' => 'DESC'
+      );
+      
+//      if($post_type=='post') $args['category'] = $twitter_posts_category;
+      $posts = get_posts($args);
+     
       if($posts){
         foreach($posts as $post){
           $post_tweet_id = get_post_meta($post->ID, '_tweet_id', true);
@@ -150,12 +199,14 @@ if($ITAP_Settings){
       if($tweets){
         foreach($tweets as $tweet){
           $tweet_id = abs((int)$tweet->id);
-          $post_exist = get_posts(array(
-            'category' => $twitter_posts_category, 
+          $post_exist_args = array(
+            'post_type' => $post_type,
+            'post_status' => $post_status_check,
             'meta_key' => '_tweet_id',
             'meta_value' => $tweet_id,
-            'post_status' => $post_status_check
-          ));
+          );
+//          if($post_type=='post') $post_exist_args['category'] = $twitter_posts_category;
+          $post_exist = get_posts($post_exist_args);
           if($post_exist) continue; // Do Nothing
             
 
@@ -199,21 +250,22 @@ if($ITAP_Settings){
           
           
           if(get_option('itap_post_title')){
-            $twitter_post_title = get_option('itap_post_title') .' ('. $tweet_id .')';
+            $twitter_post_title = get_option('itap_post_title') .' '. strip_tags(html_entity_decode($tweet_text));
           } else {
             $twitter_post_title = strip_tags(html_entity_decode($tweet_text));
           }
+          
 
           $data = array(
             'post_content'   => $tweet_text,
             'post_title'     => $twitter_post_title,
             'post_status'    => $twitter_post_status,
-            'post_type'      => 'post',
+            'post_type'      => $post_type,
             'post_author'    => 1,
             'post_date'      => $publish_date_time,
-            'post_category'  => array( $twitter_posts_category ),
             'comment_status' => 'closed'
-          ); 
+          );
+          if($post_type == 'post') $data['post_category'] = array( $twitter_posts_category );
           $insert_id = wp_insert_post($data);
 
           // Add Featured Image to Post
