@@ -13,7 +13,7 @@ License: GPLv2
 
 == Description ==
 
-"Import Tweets as Posts" allows to easily import tweets as WordPress posts from user's timeline or search query. This plugin also provides flexibility to import tweets as custom post type "tweet". User can specify the tweet import interval time, number of tweets to import, Category,  Text before tweet post title. There is also options to exclude retweets and replies from user's twitter timeline.
+"Import Tweets as Posts" plugin allows to easily import tweets from user's timeline or search query. It also provides flexibility to import tweets as custom post type "tweet". Other settings that user can specify are tweet import interval time, number of tweets to import, Category,  Text before tweet post title. There is also options to exclude retweets and replies from user's twitter timeline.
 
 Released under the terms of the GNU GPL, version 2.
 http://www.fsf.org/licensing/licenses/gpl.html

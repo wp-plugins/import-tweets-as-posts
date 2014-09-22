@@ -1,7 +1,7 @@
 <?php   
 /* Plugin Name: Import Tweets as Posts
  * Plugin URI:  http://wordpress.org/extend/plugins/import-tweets-as-posts
- * Description: This plugin will read tweets from user's timeline or search query and import them as posts in WordPress.
+ * Description: Import tweets from user's timeline or search query under default post or custom post type "tweet" in WordPress.
  * Version: 2.0
  * Author: Chandan Kumar
  * Author URI: http://www.chandankumar.in/
