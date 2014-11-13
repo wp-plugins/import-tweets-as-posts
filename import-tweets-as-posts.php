@@ -37,8 +37,10 @@ $ITAP_Settings = new ImportTweetsAsPosts_Settings();
 /*= The activation hook is executed when the plugin is activated.
 -------------------------------------------------------------------- */
 register_activation_hook(__FILE__,'itap_crontasks_activation');
-function itap_crontasks_activation(){  
-	wp_schedule_event(time(), 'interval_minutes', 'import_tweets_as_posts');
+function itap_crontasks_activation(){
+  if (!wp_next_scheduled('import_tweets_as_posts')) { 
+    wp_schedule_event(time(), 'interval_minutes', 'import_tweets_as_posts');
+  }
 }
 
 /*= The deactivation hook is executed when the plugin is deactivated
@@ -128,6 +130,15 @@ add_action( 'init', 'tweets_post_type', 0 );
 
 
 if($ITAP_Settings){
+  //Check and Schedule Cron job
+  add_action( 'wp', 'setup_itap_schedule' );
+  function setup_itap_schedule() {
+    if (!wp_next_scheduled('import_tweets_as_posts')) {
+      wp_schedule_event(time(), 'interval_minutes', 'import_tweets_as_posts');
+    }
+  }
+  
+  
 	/*= Function to import tweets as posts
 	----------------------------------------------------------- */
 	add_action('import_tweets_as_posts','import_tweets_as_posts_function');
