@@ -8,7 +8,7 @@ Donate link:  http://chandankumar.in
 Tags: Import tweets as posts, tweets to posts, twitter feeds, posts, import tweets, import tweets to blog, import tweets by search query
 Requires at least: 2.8.6
 Tested up to: 4.0
-Stable tag: 2.0
+Stable tag: 2.1
 License: GPLv2
 
 == Description ==
@@ -64,6 +64,11 @@ Note: All fields are required to work this plugin more efficiently.
 
 
 == Changelog ==
+
+= 2.1 =
+<ul>
+<li>Fixes the tweets importing issue.</li>
+</ul>
 
 = 2.0 =
 <ul>

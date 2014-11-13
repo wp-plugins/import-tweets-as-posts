@@ -2,7 +2,7 @@
 /* Plugin Name: Import Tweets as Posts
  * Plugin URI:  http://wordpress.org/extend/plugins/import-tweets-as-posts
  * Description: Import tweets from user's timeline or search query as post or custom post type "tweet" in WordPress.
- * Version: 2.0
+ * Version: 2.1
  * Author: Chandan Kumar
  * Author URI: http://www.chandankumar.in/
  * License: GPL2
@@ -42,6 +42,7 @@ function itap_crontasks_activation(){
     wp_schedule_event(time(), 'interval_minutes', 'import_tweets_as_posts');
   }
 }
+
 
 /*= The deactivation hook is executed when the plugin is deactivated
 ----------------------------------------------------------------------- */
