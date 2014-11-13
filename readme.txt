@@ -56,7 +56,7 @@ Note: All fields are required to work this plugin more efficiently.
 
 == Upgrade Notice ==
 
-= There is a new version of Import Tweets as Posts available. View version 2.0 update now. =
+= There is a new version of Import Tweets as Posts available. View version 2.1 update now. =
 
 
 == Screenshots ==
