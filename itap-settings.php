@@ -191,9 +191,10 @@ if(!class_exists('ImportTweetsAsPosts_Settings')){
             <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank">
             <input type="hidden" name="cmd" value="_s-xclick">
             <input type="hidden" name="hosted_button_id" value="PU5W6BKWH8BQE">
-            <input type="image" src="'. plugins_url('/images/btn_donate.gif', __FILE__ ).'" border="0" name="submit" alt="PayPal Ð The safer, easier way to pay online.">
+            <input type="image" src="'. plugins_url('/images/btn_donate.gif', __FILE__ ).'" border="0" name="submit" alt="PayPal ï¿½ The safer, easier way to pay online.">
             <img alt="" border="0" src="https://www.paypalobjects.com/en_GB/i/scr/pixel.gif" width="1" height="1">
             </form>
+            <em><small>Donate your cheers to ITAP plugin. :)</small></em> 
           </div>';
         echo '</div>';
 			echo '</div>';

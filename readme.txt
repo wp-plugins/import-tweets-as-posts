@@ -7,8 +7,8 @@ Author:       Chandan Kumar
 Donate link:  http://chandankumar.in
 Tags: Import tweets as posts, tweets to posts, twitter feeds, posts, import tweets, import tweets to blog, import tweets by search query
 Requires at least: 2.8.6
-Tested up to: 4.1
-Stable tag: 2.1
+Tested up to: 4.2
+Stable tag: 2.2
 License: GPLv2
 
 == Description ==
@@ -19,7 +19,7 @@ Released under the terms of the GNU GPL, version 2.
 http://www.fsf.org/licensing/licenses/gpl.html
 
 NO WARRANTY.
-Copyright (c) 2014 Chandan Kumar
+Copyright (c) 2015 Chandan Kumar
 
 
 == Installation ==
@@ -56,7 +56,7 @@ Note: All fields are required to work this plugin more efficiently.
 
 == Upgrade Notice ==
 
-= There is a new version of Import Tweets as Posts available. View version 2.1 update now. =
+= There is a new version of Import Tweets as Posts available. View version 2.2 update now. =
 
 
 == Screenshots ==
@@ -64,6 +64,10 @@ Note: All fields are required to work this plugin more efficiently.
 
 
 == Changelog ==
+= 2.2 =
+<ul>
+<li>Fixes the long retweets which get truncated.</li>
+</ul>
 
 = 2.1 =
 <ul>

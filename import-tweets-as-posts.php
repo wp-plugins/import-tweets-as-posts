@@ -2,12 +2,12 @@
 /* Plugin Name: Import Tweets as Posts
  * Plugin URI:  http://wordpress.org/extend/plugins/import-tweets-as-posts
  * Description: Import tweets from user's timeline or search query as post or custom post type "tweet" in WordPress.
- * Version: 2.1
+ * Version: 2.2
  * Author: Chandan Kumar
  * Author URI: http://www.chandankumar.in/
  * License: GPL2
  
-Copyright 2014 Chandan Kumar (email : chandanonline4u@gmail.com)
+Copyright 2015 Chandan Kumar (email : chandanonline4u@gmail.com)
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -226,7 +226,12 @@ if($ITAP_Settings){
 //          $pattern = '/http:(\S)+/';
           $pattern = "/(http|https)\:\/\/[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,3}(\/\S*)?/";
           $replace = '<a href="${0}" target="_blank">${0}</a>';
-          $tweet_text = preg_replace($pattern, $replace, $tweet->text);
+          
+          $tweet_text = $tweet->text;
+          if($tweet->retweeted_status){
+            $tweet_text = "RT @" . $tweet->retweeted_status->user->name . ": " . $tweet->retweeted_status->text;
+          }
+          $tweet_text = preg_replace($pattern, $replace, $tweet_text);
           
           // Convert @ to follow
           $follow_pattern = '/(@([_a-z0-9\-]+))/i';
