@@ -8,7 +8,7 @@ Donate link:  http://chandankumar.in
 Tags: Import tweets as posts, tweets to posts, twitter feeds, posts, import tweets, import tweets to blog, import tweets by search query
 Requires at least: 2.8.6
 Tested up to: 4.2
-Stable tag: 2.2
+Stable tag: 2.3
 License: GPLv2
 
 == Description ==
@@ -39,9 +39,10 @@ Copyright (c) 2015 Chandan Kumar
   <li>if importing tweets from search query, Set 'Twitter Search Result Type'.</li>
   <li>No. of Tweets to Import</li>
   <li>Tweets Imports Time Interval (e.g. Enter "1" for 1 minute interval)</li>
-  <li>Tweets Post Title: 
-    <ol><li>Add custom text before tweet title e.g. "Tweet: "</li><li>Note: Leave this blank if you want to display tweet text as title</li></ol>
+  <li>Tweets Post Title Prefix: 
+    <ol><li>Add custom text before tweet post title e.g. "Tweet: "</li></ol>
   </li>
+  <li>Set Tweets Post Title Characters Limit (e.g. 40).</li> 
   <li>Set Tweet Post type as "post" or "tweet".</li>
   <li>Set Post Category, if post type is "post".</li>
   <li>Set Twitter Posts Default Status</li>
@@ -56,7 +57,7 @@ Note: All fields are required to work this plugin more efficiently.
 
 == Upgrade Notice ==
 
-= There is a new version of Import Tweets as Posts available. View version 2.2 update now. =
+= There is a new version of Import Tweets as Posts available. View version 2.3 update now. =
 
 
 == Screenshots ==
@@ -64,6 +65,11 @@ Note: All fields are required to work this plugin more efficiently.
 
 
 == Changelog ==
+= 2.3 =
+<ul>
+<li>Added option of characters limit in tweet post title.</li>
+</ul>
+
 = 2.2 =
 <ul>
 <li>Fixes the long retweets which get truncated.</li>

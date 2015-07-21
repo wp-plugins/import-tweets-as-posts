@@ -2,7 +2,7 @@
 /* Plugin Name: Import Tweets as Posts
  * Plugin URI:  http://wordpress.org/extend/plugins/import-tweets-as-posts
  * Description: Import tweets from user's timeline or search query as post or custom post type "tweet" in WordPress.
- * Version: 2.2
+ * Version: 2.3
  * Author: Chandan Kumar
  * Author URI: http://www.chandankumar.in/
  * License: GPL2
@@ -254,25 +254,36 @@ if($ITAP_Settings){
           
           $tweet_created_at = strtotime($tweet->created_at);
           $itap_set_timezone = get_option('itap_wp_time_as_published_date');
+          $tweet_post_time = $tweet_created_at + $tweet->user->utc_offset;
           
           if($itap_set_timezone=='yes'){
             $wp_offset = get_option('gmt_offset');
             if($wp_offset){
               $tweet_post_time = $tweet_created_at + ($wp_offset * 3600);
             }
-          } else {
-            $tweet_post_time = $tweet_created_at + $tweet->user->utc_offset;
           }
           $publish_date_time = date_i18n( 'Y-m-d H:i:s', $tweet_post_time );
           
           
+          // Get full twitter text
+          $twitter_post_title = strip_tags(html_entity_decode($tweet_text));
+          
+          // Add prefix to twitter post title
           if(get_option('itap_post_title')){
-            $twitter_post_title = get_option('itap_post_title') .' '. strip_tags(html_entity_decode($tweet_text));
-          } else {
-            $twitter_post_title = strip_tags(html_entity_decode($tweet_text));
+            $twitter_post_title = get_option('itap_post_title') .' '. $twitter_post_title;
           }
           
-
+          // Limit characters limit in twitter post title
+          if(get_option('itap_post_title_limit')){
+            $charLimit = get_option('itap_post_title_limit');
+            if(strlen($twitter_post_title)<=$charLimit){
+              $twitter_post_title = $twitter_post_title;
+            } else {
+              $twitter_post_title = substr($twitter_post_title, 0, $charLimit).'...';
+            }
+          }
+          
+          //Insert post parameters
           $data = array(
             'post_content'   => $tweet_text,
             'post_title'     => $twitter_post_title,

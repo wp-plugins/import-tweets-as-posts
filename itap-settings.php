@@ -1,10 +1,10 @@
 <?php
 if(!class_exists('ImportTweetsAsPosts_Settings')){
-	class ImportTweetsAsPosts_Settings{
-		/*= Construct the plugin object */
+  class ImportTweetsAsPosts_Settings{
+    /*= Construct the plugin object */
     var $fields;
     
-		public function __construct(){
+	public function __construct(){
       //field_id as key => feild title/label, field type
       $this->fields = array(
         'itap_tweet_from' => array('title'=>'Import Tweets From', 'type'=>'selectbox'),
@@ -17,7 +17,8 @@ if(!class_exists('ImportTweetsAsPosts_Settings')){
         'itap_access_token_secret' => array('title'=>'witter Access Token Secret', 'type'=>'input'),
         'itap_tweets_count' => array('title'=>'No. of Tweets to Import', 'type'=>'input'),
         'itap_interval_time' => array('title'=>'Tweets Imports Time Interval', 'type'=>'input'),
-        'itap_post_title' => array('title'=>'Text before Tweets Post Title', 'type'=>'input'),
+        'itap_post_title' => array('title'=>'Tweets Post Title Prefix', 'type'=>'input'),
+        'itap_post_title_limit' => array('title'=>'Tweets Post Title Characters Limit', 'type'=>'input'),
         'itap_post_type' => array('title'=>'Tweets Post Type', 'type'=>'selectbox'),
         'itap_assigned_category' => array('title'=>'Assigned Category to Twitter Posts', 'type'=>'selectbox'),
         'itap_post_status' => array('title'=>'Twitter Posts Default Status', 'type'=>'selectbox'),
@@ -26,24 +27,21 @@ if(!class_exists('ImportTweetsAsPosts_Settings')){
         'itap_wp_time_as_published_date' => array('title'=>'Publish date as WordPress Timezone', 'type'=>'selectbox')
       );
       
-      
       // register actions
-			add_action('admin_init', array(&$this, 'admin_init'));
-			add_action('admin_menu', array(&$this, 'add_menu'));
-      
-		}
+      add_action('admin_init', array(&$this, 'admin_init'));
+      add_action('admin_menu', array(&$this, 'add_menu'));
+    }
 
     /*= hook into WP's admin_init action hook */
     public function admin_init(){
       // Plugins Settings Section
-			add_settings_section(
-				'import_tweets_as_posts-section', '',
-				array(&$this, 'settings_section_itap'),
-				'import_tweets_as_posts'
-			);
+      add_settings_section(
+        'import_tweets_as_posts-section', '',
+        array(&$this, 'settings_section_itap'),
+        'import_tweets_as_posts'
+      );
       
-      
-			// Register feilds and their settings
+      // Register feilds and their settings
       if($this->fields){
         foreach($this->fields as $key => $value){
           //Register Field
@@ -59,8 +57,6 @@ if(!class_exists('ImportTweetsAsPosts_Settings')){
           );
         }
       }
-      
-      
     } // END public static function activate
     
         
@@ -80,13 +76,13 @@ if(!class_exists('ImportTweetsAsPosts_Settings')){
         // echo a proper input type="text"
         echo sprintf('<input type="text" name="%s" id="%s" value="%s" width="200" />', $field, $field, $value);
         if($field=='itap_post_title'){
-          _e('<span class="note">To display tweet text as post title, leave this field blank.</span>');
-        }
-        if($field == 'itap_search_string'){
+          _e('<span class="note">Add some prefix to twitter post title.</span>');
+        } else if($field == 'itap_search_string'){
           _e('<span class="note">Enter search text. For more reference <a href="https://dev.twitter.com/docs/using-search" target="_blank">https://dev.twitter.com/docs/using-search</a></span>');
-        }
-        if($field == 'itap_interval_time'){
-           _e('<span class="note">Enter interval time in minutes (e.g. 5).</span>');
+        } else if($field == 'itap_interval_time'){
+          _e('<span class="note">Enter interval time in minutes (e.g. 5).</span>');
+        } else if($field == 'itap_post_title_limit'){
+          _e('<span class="note">Enter post title characters limit (e.g. 40).</span>');
         }
       
       } else if($field_type=='selectbox'){
@@ -161,23 +157,23 @@ if(!class_exists('ImportTweetsAsPosts_Settings')){
         
     /*= add a menu */	
     public function add_menu(){
-			// Add a page to manage this plugin's settings
-			add_options_page(
-				'Import Tweets as Posts Settings',
-				'Import Tweets as Posts',
-				'manage_options',
-				'import_tweets_as_posts',
-				array(&$this, 'itap_plugin_settings_page')
-			);
+      // Add a page to manage this plugin's settings
+      add_options_page(
+        'Import Tweets as Posts Settings',
+        'Import Tweets as Posts',
+        'manage_options',
+        'import_tweets_as_posts',
+        array(&$this, 'itap_plugin_settings_page')
+      );
     } 
     
     /*= Menu Callback */	
     public function itap_plugin_settings_page(){
-			if(!current_user_can('manage_options')){
-				wp_die(__('You do not have sufficient permissions to access this page.'));
-			}
-			_e('<div class="wrap">');
-				echo '<h2>Import Tweets as Posts - Settings</h2>';
+      if(!current_user_can('manage_options')){
+        wp_die(__('You do not have sufficient permissions to access this page.'));
+      }
+      _e('<div class="wrap">');
+      _e('<h2>Import Tweets as Posts - Settings</h2>');
         
         echo '<div id="itap_settings_form_wrapper">';
           echo '<form method="post" action="options.php" id="itap_settings_form">';
@@ -191,13 +187,14 @@ if(!class_exists('ImportTweetsAsPosts_Settings')){
             <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank">
             <input type="hidden" name="cmd" value="_s-xclick">
             <input type="hidden" name="hosted_button_id" value="PU5W6BKWH8BQE">
-            <input type="image" src="'. plugins_url('/images/btn_donate.gif', __FILE__ ).'" border="0" name="submit" alt="PayPal � The safer, easier way to pay online.">
+            <input type="image" src="'. plugins_url('/images/btn_donate.gif', __FILE__ ).'" border="0" name="submit" alt="PayPal The safer, easier way to pay online.">
             <img alt="" border="0" src="https://www.paypalobjects.com/en_GB/i/scr/pixel.gif" width="1" height="1">
             </form>
-            <em><small>Donate your cheers to ITAP plugin. :)</small></em> 
-          </div>';
+            <em><small>Donate some cheers to ITAP plugin. :)</small></em> 
+          </div>'; // end #donate-itap
         echo '</div>';
-			echo '</div>';
+        
+      _e('</div>'); // end .wrap
     } // END public function plugin_settings_page()
     
     
