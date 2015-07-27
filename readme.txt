@@ -67,7 +67,8 @@ Note: All fields are required to work this plugin more efficiently.
 == Changelog ==
 = 2.4 =
 <ul>
-<li>Fixed RT user name hyperlink.</li>
+<li>Fixed RT user incorrect hyperlink.</li>
+<li>Added a option in settings to display RT user name just before @screen_name.</li>
 </ul>
 
 = 2.3 =
