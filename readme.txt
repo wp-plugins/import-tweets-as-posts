@@ -8,7 +8,7 @@ Donate link:  http://chandankumar.in
 Tags: Import tweets as posts, tweets to posts, twitter feeds, posts, import tweets, import tweets to blog, import tweets by search query
 Requires at least: 2.8.6
 Tested up to: 4.2
-Stable tag: 2.3
+Stable tag: 2.4
 License: GPLv2
 
 == Description ==
@@ -57,7 +57,7 @@ Note: All fields are required to work this plugin more efficiently.
 
 == Upgrade Notice ==
 
-= There is a new version of Import Tweets as Posts available. View version 2.3 update now. =
+= There is a new version of Import Tweets as Posts available. View version 2.4 update now. =
 
 
 == Screenshots ==
@@ -65,6 +65,11 @@ Note: All fields are required to work this plugin more efficiently.
 
 
 == Changelog ==
+= 2.4 =
+<ul>
+<li>Fixed RT user name hyperlink.</li>
+</ul>
+
 = 2.3 =
 <ul>
 <li>Added option of characters limit in tweet post title.</li>
