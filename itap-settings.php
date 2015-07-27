@@ -23,6 +23,7 @@ if(!class_exists('ImportTweetsAsPosts_Settings')){
         'itap_assigned_category' => array('title'=>'Assigned Category to Twitter Posts', 'type'=>'selectbox'),
         'itap_post_status' => array('title'=>'Twitter Posts Default Status', 'type'=>'selectbox'),
         'itap_import_retweets' => array('title'=>'Import Retweets', 'type'=>'selectbox'),
+        'itap_display_retweets_username' => array('title'=>'Display RT User Name before Screen Name', 'type'=>'selectbox'),
         'itap_exclude_replies' => array('title'=>'Exclude Replies', 'type'=>'selectbox'),
         'itap_wp_time_as_published_date' => array('title'=>'Publish date as WordPress Timezone', 'type'=>'selectbox')
       );
@@ -112,7 +113,7 @@ if(!class_exists('ImportTweetsAsPosts_Settings')){
                 _e('<option value="'. $type .'" '.$selected .'>'. $type .'</option>');
               }
             }
-          } else if($field=='itap_import_retweets' OR $field=='itap_exclude_replies'){
+          } else if($field=='itap_import_retweets' OR $field=='itap_exclude_replies' OR $field=='itap_display_retweets_username'){
             $types = array('yes','no');
             if($types){
               foreach($types as $type){
