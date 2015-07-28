@@ -227,9 +227,9 @@ if($ITAP_Settings){
             $display_username = get_option('itap_display_retweets_username');
             $tweet_text = "RT ";
             if($display_username=='yes'){
-              $tweet_text .= $tweet->retweeted_status->user->name;
+              $tweet_text .= $tweet->retweeted_status->user->name .' ';
             }
-            $tweet_text .= " @".$tweet->retweeted_status->user->screen_name .": ". $tweet->retweeted_status->text;
+            $tweet_text .= "@".$tweet->retweeted_status->user->screen_name .": ". $tweet->retweeted_status->text;
           }
           $tweet_text = preg_replace($pattern, $replace, $tweet_text);
 
