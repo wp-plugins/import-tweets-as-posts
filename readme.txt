@@ -8,7 +8,7 @@ Donate link:  http://chandankumar.in
 Tags: Import tweets as posts, tweets to posts, twitter feeds, posts, import tweets, import tweets to blog, import tweets by search query
 Requires at least: 2.8.6
 Tested up to: 4.2
-Stable tag: 2.4
+Stable tag: 2.5
 License: GPLv2
 
 == Description ==
@@ -57,7 +57,7 @@ Note: All fields are required to work this plugin more efficiently.
 
 == Upgrade Notice ==
 
-= There is a new version of Import Tweets as Posts available. View version 2.4 update now. =
+= There is a new version of Import Tweets as Posts available. View version 2.5 update now. =
 
 
 == Screenshots ==
@@ -65,6 +65,12 @@ Note: All fields are required to work this plugin more efficiently.
 
 
 == Changelog ==
+= 2.5 =
+<ul>
+<li>Added a meta key '_tweet_url' to save tweet's original url.</li>
+<li>Added a option in settings to set tweet post comment status.</li>
+</ul>
+
 = 2.4 =
 <ul>
 <li>Fixed RT user incorrect hyperlink.</li>

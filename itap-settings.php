@@ -21,7 +21,8 @@ if(!class_exists('ImportTweetsAsPosts_Settings')){
         'itap_post_title_limit' => array('title'=>'Tweets Post Title Characters Limit', 'type'=>'input'),
         'itap_post_type' => array('title'=>'Tweets Post Type', 'type'=>'selectbox'),
         'itap_assigned_category' => array('title'=>'Assigned Category to Twitter Posts', 'type'=>'selectbox'),
-        'itap_post_status' => array('title'=>'Twitter Posts Default Status', 'type'=>'selectbox'),
+        'itap_post_status' => array('title'=>'Tweets Default Status', 'type'=>'selectbox'),
+        'itap_post_comment_status' => array('title'=>'Tweets Comment Status', 'type'=>'selectbox'),
         'itap_import_retweets' => array('title'=>'Import Retweets', 'type'=>'selectbox'),
         'itap_display_retweets_username' => array('title'=>'Display RT User Name before Screen Name', 'type'=>'selectbox'),
         'itap_exclude_replies' => array('title'=>'Exclude Replies', 'type'=>'selectbox'),
@@ -107,6 +108,14 @@ if(!class_exists('ImportTweetsAsPosts_Settings')){
             }
           } else if($field=='itap_post_status'){ // If field type post status
             $status_types = array('publish','draft');
+            if($status_types){
+              foreach($status_types as $type){
+                $selected = ($type==$value) ? 'selected' : '';
+                _e('<option value="'. $type .'" '.$selected .'>'. $type .'</option>');
+              }
+            }
+          } else if($field=='itap_post_comment_status' ) { 
+            $status_types = array('closed','open');
             if($status_types){
               foreach($status_types as $type){
                 $selected = ($type==$value) ? 'selected' : '';

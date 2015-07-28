@@ -2,7 +2,7 @@
 /* Plugin Name: Import Tweets as Posts
  * Plugin URI:  http://wordpress.org/extend/plugins/import-tweets-as-posts
  * Description: Import tweets from user's timeline or search query as post or custom post type "tweet" in WordPress.
- * Version: 2.4
+ * Version: 2.5
  * Author: Chandan Kumar
  * Author URI: http://www.chandankumar.in/
  * License: GPL2
@@ -140,19 +140,19 @@ if($ITAP_Settings){
   }
   
   
-	/*= Function to import tweets as posts
-	----------------------------------------------------------- */
-	add_action('import_tweets_as_posts','import_tweets_as_posts_function');
-	function import_tweets_as_posts_function(){
-	  $post_tweet_id;
-	  if( ( get_option('itap_user_id')<>'' OR get_option('itap_search_string')<>'') AND get_option('itap_consumer_key')<>'' AND 
-      get_option('itap_consumer_secret')<>'' AND get_option('itap_access_token')<>'' AND get_option('itap_access_token_secret')<>'' ){
-		
+  /*= Function to import tweets as posts
+  ----------------------------------------------------------- */
+  add_action('import_tweets_as_posts','import_tweets_as_posts_function');
+  function import_tweets_as_posts_function(){
+    $post_tweet_id;
+    if( ( get_option('itap_user_id')<>'' OR get_option('itap_search_string')<>'') AND get_option('itap_consumer_key')<>'' AND 
+    get_option('itap_consumer_secret')<>'' AND get_option('itap_access_token')<>'' AND get_option('itap_access_token_secret')<>'' ){
+
       $tweet_from = get_option('itap_tweet_from');
       $twitteruser = get_option('itap_user_id');
       $tweet_search_string = get_option('itap_search_string');
       $search_result_type = get_option('itap_search_result_type');
-      
+
       $consumerkey = get_option('itap_consumer_key');
       $consumersecret = get_option('itap_consumer_secret');
       $accesstoken = get_option('itap_access_token');
@@ -160,17 +160,19 @@ if($ITAP_Settings){
 
       $notweets = (get_option('itap_tweets_count')) ? get_option('itap_tweets_count') : 30;
       $twitter_posts_category = get_option('itap_assigned_category');
+
       $twitter_post_status = get_option('itap_post_status');
+      $itap_post_comment_status = get_option('itap_post_comment_status');
       $import_retweets = get_option('itap_import_retweets');
       $exclude_replies = get_option('itap_exclude_replies');
 
       $connection = new TwitterOAuth($consumerkey, $consumersecret, $accesstoken, $accesstokensecret);
       $post_status_check =  array('publish','pending','draft','auto-draft', 'future', 'private', 'inherit','schedule');
       $post_type = get_option('itap_post_type');
-      
+
       if($tweet_from=='Search Query'){ // Import from search query
         $tweet_api_url = "https://api.twitter.com/1.1/search/tweets.json?q=".  rawurlencode($tweet_search_string) ."&result_type=".$search_result_type."&count=".$notweets;
-        
+
       } else { // Import from user timeline
         $tweet_api_url = "https://api.twitter.com/1.1/statuses/user_timeline.json?screen_name=".$twitteruser."&count=".$notweets;
         if($import_retweets=='no'){
@@ -180,8 +182,8 @@ if($ITAP_Settings){
           $tweet_api_url .= "&exclude_replies=true";
         }
       }
-      
-      
+
+
       $args = array(
         'posts_per_page' => 1, 
         'post_type' => $post_type,
@@ -189,10 +191,7 @@ if($ITAP_Settings){
         'post_status' => $post_status_check,
         'order' => 'DESC'
       );
-      
-//      if($post_type=='post') $args['category'] = $twitter_posts_category;
       $posts = get_posts($args);
-     
       if($posts){
         foreach($posts as $post){
           $post_tweet_id = get_post_meta($post->ID, '_tweet_id', true);
@@ -201,13 +200,12 @@ if($ITAP_Settings){
           $tweet_api_url .= "&since_id=".$post_tweet_id; // Get twitter feeds after the recent tweet (by id) in WordPress database
         }
       }
-      
-      
+
       $tweets = $connection->get($tweet_api_url);
       if($tweet_from=='Search Query'){
         $tweets = $tweets->statuses;
       }
-      
+
       if($tweets){
         foreach($tweets as $tweet){
           $tweet_id = abs((int)$tweet->id);
@@ -217,17 +215,14 @@ if($ITAP_Settings){
             'meta_key' => '_tweet_id',
             'meta_value' => $tweet_id,
           );
-//          if($post_type=='post') $post_exist_args['category'] = $twitter_posts_category;
           $post_exist = get_posts($post_exist_args);
           if($post_exist) continue; // Do Nothing
-            
 
           // Convert links to real links.
-//          $pattern = '/http:(\S)+/';
           $pattern = "/(http|https)\:\/\/[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,3}(\/\S*)?/";
           $replace = '<a href="${0}" target="_blank">${0}</a>';
           $tweet_text = $tweet->text;
-          
+
           if($tweet->retweeted_status){
             $display_username = get_option('itap_display_retweets_username');
             $tweet_text = "RT ";
@@ -237,12 +232,12 @@ if($ITAP_Settings){
             $tweet_text .= " @".$tweet->retweeted_status->user->screen_name .": ". $tweet->retweeted_status->text;
           }
           $tweet_text = preg_replace($pattern, $replace, $tweet_text);
-          
+
           // Convert @ to follow
           $follow_pattern = '/(@([_a-z0-9\-]+))/i';
           $follow_replace = '<a href="https://twitter.com/${0}" target="_blank">${0}</a>';
           $tweet_text = preg_replace($follow_pattern, $follow_replace, $tweet_text);
-          
+
           // Link Search Querys under tweet text
           $hashtags = $tweet->entities->hashtags;
           if($hashtags){
@@ -255,12 +250,10 @@ if($ITAP_Settings){
           }
 
           // Set tweet time as post publish date
-//          $tweet_post_time = strtotime($tweet->created_at) + $tweet->user->utc_offset;
-          
           $tweet_created_at = strtotime($tweet->created_at);
           $itap_set_timezone = get_option('itap_wp_time_as_published_date');
           $tweet_post_time = $tweet_created_at + $tweet->user->utc_offset;
-          
+
           if($itap_set_timezone=='yes'){
             $wp_offset = get_option('gmt_offset');
             if($wp_offset){
@@ -268,16 +261,16 @@ if($ITAP_Settings){
             }
           }
           $publish_date_time = date_i18n( 'Y-m-d H:i:s', $tweet_post_time );
-          
-          
+
+
           // Get full twitter text
           $twitter_post_title = strip_tags(html_entity_decode($tweet_text));
-          
+
           // Add prefix to twitter post title
           if(get_option('itap_post_title')){
             $twitter_post_title = get_option('itap_post_title') .' '. $twitter_post_title;
           }
-          
+
           // Limit characters limit in twitter post title
           if(get_option('itap_post_title_limit')){
             $charLimit = get_option('itap_post_title_limit');
@@ -287,7 +280,10 @@ if($ITAP_Settings){
               $twitter_post_title = substr($twitter_post_title, 0, $charLimit).'...';
             }
           }
-          
+
+          //Twitter Post's Comment status
+          $comment_status = ($itap_post_comment_status) ? $itap_post_comment_status : 'closed'; 
+
           //Insert post parameters
           $data = array(
             'post_content'   => $tweet_text,
@@ -296,7 +292,7 @@ if($ITAP_Settings){
             'post_type'      => $post_type,
             'post_author'    => 1,
             'post_date'      => $publish_date_time,
-            'comment_status' => 'closed'
+            'comment_status' => $comment_status
           );
           if($post_type == 'post') $data['post_category'] = array( $twitter_posts_category );
           $insert_id = wp_insert_post($data);
@@ -308,14 +304,14 @@ if($ITAP_Settings){
             $upload_dir = wp_upload_dir(); // Set upload folder
             $image_data = file_get_contents($tweet_media_url); // Get image data
             $filename   = basename($tweet_media_url); // Create image file name
-            
+
             // Check folder permission and define file location
             if( wp_mkdir_p( $upload_dir['path'] ) ) {
               $file = $upload_dir['path'] . '/' . $filename;
             } else {
               $file = $upload_dir['basedir'] . '/' . $filename;
             }
-            
+
             // Create the image  file on the server
             file_put_contents( $file, $image_data );
 
@@ -343,13 +339,17 @@ if($ITAP_Settings){
             set_post_thumbnail( $insert_id, $attach_id );
           }
 
-          if($insert_id){
-            update_post_meta($insert_id, '_tweet_id', $tweet_id);
-          }
-        }
+          //Tweet's Original URL
+          $tweet_url  = $tweet_url = 'https://twitter.com/'.$tweet->user->screen_name .'/status/'. $tweet_id;
+
+          // Update tweet meta
+          update_post_meta($insert_id, '_tweet_id', $tweet_id); // Tweet id
+          update_post_meta($insert_id, '_tweet_url', $tweet_url); //Tweet URL
+
+        } //end foreach
       } // end if
-	  }
-	} // end of import_tweets_as_posts_function
-	
+      
+    } // end scret key check if
+  } // end of import_tweets_as_posts_function
 }
 ?>
